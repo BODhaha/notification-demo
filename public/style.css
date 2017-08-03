@@ -147,3 +147,9 @@ ul {
   right: 0;
   width: 100%;
 }
+
+.broadcast {
+  text-align: center;
+  padding: 10px;
+  color: #8c8c8c;
+}

@@ -5,8 +5,10 @@
   "main": "app.js",
   "author": "BOD",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.15.3",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "web-push": "^3.2.2"
   },
   "scripts": {
     "start": "node-dev app.js"
