@@ -5,6 +5,8 @@ var swRegistration
 var $enableToPush = $('#enable-to-push')
 var $text = $('#text')
 var $send = $('#send')
+var vapidPublicKey = 'BMoCRef_vaEDb5oe6BAxYBSHkf5RIk6adMwY-FCMhsMd9nhioDn4xSrrFZhuie2IHbj87SgnuSemeLTVEd1IzW8';
+var convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
 
 $enableToPush.click(function () {
     notifyMe()
@@ -34,16 +36,6 @@ function sendSubscription () {
 
         return swRegistration.pushManager.subscribe({userVisibleOnly: true})
     })
-    // swRegistration.pushManager.subscribe({
-    //     userVisibleOnly: true
-    // })
-    // .then(function (subscription) {
-    //     console.log('User is subscribed')
-    //     console.log('subscription: ', subscription)
-    // })
-    // .catch(function (err) {
-    //     console.log('Failed to subscribe the user: ', err)
-    // })
 }
 
 function registerSw () {
@@ -60,7 +52,10 @@ function registerSw () {
                     return subscription
                 }
 
-                return registration.pushManager.subscribe({userVisibleOnly: true})
+                return registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidKey
+                })
             })
         })
         .then(function (subscription) {
@@ -88,17 +83,6 @@ function registerSw () {
                     console.log('register success')
                 }
             });
-            // fetch('./register', {
-            //     methods: 'post',
-            //     headers: {
-            //         'Content-type': 'application/json'
-            //     },
-            //     body: JSON.stringify({
-            //         endpoint: subscription.endpoint,
-            //         key: key,
-            //         authSecret: authSecret
-            //     })
-            // })
         })
         .catch(function (error) {
             console.error('Service Worker Error', error)
@@ -108,6 +92,20 @@ function registerSw () {
     }
 }
 
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
 
 $send.click(function () {
     let payload = $text.val()
